@@ -62,7 +62,7 @@ puts:
 	mov ah, 0x0E	; TTY Mode
 	mov bh, 0		; Page Number = 0
 	int 0x10		; Video Interrupt
-
+  
 	jmp .loop
 
 .done:
@@ -71,8 +71,8 @@ puts:
 	ret
 
 main:
-	mov si, msg_dbg
-	call puts	
+	; mov si, msg_dbg
+	; call puts
 	; Setup the data segments
 	mov ax, 0		; Cant write to segment registers directly
 	mov ds, ax
@@ -87,13 +87,17 @@ main:
 	; BIOS should set DL to drive number
 	mov [ebpb_drive_number], dl
 
-	mov ax, 1						; LBA=1, Second Sector from DISK
+	mov ax, 34						; LBA
 	mov cl, 1						; 1 Sector to read
 	mov bx, 0x7E00					; Data Should be after the bootlaoder (0x7C00 - 0x7DFF)
 	call disk_read
 
+	
 	mov si, hello_msg
 	call puts	
+
+	mov si, 0x7E00
+	call puts
 
 	cli								; Stop the Interrupts so CPU cannot get out of halt
 	hlt
